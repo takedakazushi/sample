@@ -4,10 +4,17 @@ class TodolistsController < ApplicationController
   end
 
   def create
-    list = List.new(list_params)
-    list.save
-    redirect_to todolist_path(list.id)
-  end
+    @list = List.new(list_params)
+    tags = Vision.get_image_data(list_params[:image])    
+    if @list.save
+    tags.each do |tag|
+    @list.tags.create(name: tag)
+      end 
+      redirect_to todolist_path(@list.id)
+    else
+      render :new
+    end
+  end 
 
   def index
     @lists = List.all
